@@ -29,8 +29,8 @@ class MovieController extends Controller
     {
         $validator = Validator::make($request->all(), [
         'title' => 'required|max:255|unique:movies',
-        'duration' => 'required',
-        'release_year' => 'required|digits:4',
+        'duration' => 'nullable|integer',
+        'release_year' => 'nullable|digits:4',
         ]);
         if ($validator->fails()) {
         return response()->json(['errors' =>
