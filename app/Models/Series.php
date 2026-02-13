@@ -11,9 +11,4 @@ class Series extends Model
     protected $table = 'series';
     protected $fillable = ['title', 'genre', 'release_year'];
 
-    public function series()
-    {
-        return $this->belongsTo(Series::class);
-    }
-
 }
