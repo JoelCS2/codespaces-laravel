@@ -11,8 +11,4 @@ class Movie extends Model
     protected $table = 'movies';
     protected $fillable = ['title', 'duration', 'release_year'];
 
-    public function movies()
-    {
-        return $this->hasMany(Movie::class);
-    }
 }
