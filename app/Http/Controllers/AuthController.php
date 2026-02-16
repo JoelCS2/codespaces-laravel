@@ -32,6 +32,10 @@ class AuthController extends Controller
         ]);
 
 
-        return response()->json(['message' => 'Usuario registrado exitosamente'], 201);
+        return response()->json([
+            'token' => $token,
+            'user' => $user,
+            'message' => 'Usuario registrado correctamente'
+        ], 201);
     }
 }
