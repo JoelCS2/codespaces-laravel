@@ -8,8 +8,12 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 
+
 class MovieController extends Controller
 {
+
+
+
     public function index()
     {
         $movies = Movie::all();
