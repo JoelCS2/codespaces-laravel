@@ -89,4 +89,30 @@ class AuthController extends Controller
 
     }
 
+    //funcion para sacar mis datos del propio usuario /me ---> getUser()
+
+    public function getUser(){
+        $user = Auth::user();
+        return response()->json([
+            'MI PERFIL' => $user,
+        ],200);
+
+    }
+
+
+    //funcion para cerrar sesion, logout destruye el token creado anteriormente
+    public function logout(){
+        try{
+
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return response ()-> json([
+                'message' => 'Token invalidado correctamente'
+            ], 200);
+        }catch(JWTException $e){
+            return response ()->json([
+                'message' => 'Error al intentar invalidar el token'
+            ], 500);
+        }
+    }
+
 }
