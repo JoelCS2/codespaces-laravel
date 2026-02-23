@@ -42,10 +42,50 @@ class AuthController extends Controller
         //Parte C: Finalmente, se devuelve una respuesta JSON con un mensaje de éxito y los datos del usuario creado.
 
         return response()->json([
-            'token' => $token,
             'user' => $user,
             'message' => 'Usuario registrado correctamente'
         ], 201);
+
+    }
+
+    //funcion para logearnos
+
+    public function login (Request $request){
+
+        $validator = Validator:: make ($request -> all(),[
+            'email' =>'required|string|email|max:100',
+            'password' => 'required|string|min:8'
+        ]);
+
+        if ($validator -> fails()){
+            return response()->json($validator->errors(), 422);
+        }
+
+        $credentials = $request-> only([
+            'email',
+            'password'
+        ]);
+
+        //validar las credenciales de usuario y contraseña
+        try{
+
+            if (!$token = JWTAuth ::attempt($credentials)){
+                return response()-> json([
+                    'message' => 'Invalid credentials',
+                ], 401);
+            }
+            return response() ->json([
+                'message' => 'User logged in successfully',
+                'token' => $token,
+            ], 200);
+
+        }catch (JWTExcepetion $e){
+
+            return response ()-> json ([
+                'error' => 'Could not create token',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
 
     }
 
