@@ -40,4 +40,36 @@ class AuthController extends Controller
             'message' => 'Usuario registrado correctamente'
         ], 201);
     }
+
+    public function login (Request $request){
+        $credentials = $request->only('email', 'password');
+
+        try {
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'Credenciales inválidas'], 401);
+            }
+            return response()->json([
+                'token' => $token,
+                'message' => 'Inicio de sesión exitoso'
+            ], 200);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'No se pudo crear el token'], 500);
+        }
+
+    }
+
+    public function getUser(){
+        $user = Auth::user();
+        return response()->json(['message' => 'Usuario autenticado',
+        'data' => $user], 200);
+    }
+
+    public function logout(Request $request) {
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return response()->json(['message' => 'Usuario desconectado correctamente'], 200);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'No se pudo invalidar el token'], 500);
+        }
+    }
 }
