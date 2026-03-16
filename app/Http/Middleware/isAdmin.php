@@ -15,11 +15,13 @@ class isAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth('api')->user() && auth('api')->user()->is_admin) {
+        $user = $request->user(); 
+
+        if ($user && $user->role === 'admin') {
             return $next($request);
-        } else {
-            return response()->json(['message' => 'No autorizado, no tienes el rol de administrador'], 401);
         }
-        return $next($request);
+
+        return response()->json(['message' => 'No autorizado, no tienes el rol de administrador'], 401);
     }
+
 }
