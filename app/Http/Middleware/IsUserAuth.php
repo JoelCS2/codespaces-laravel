@@ -18,7 +18,7 @@ class IsUserAuth
         if (auth('api')->user()){
             return $next($request);
         }else{
-            return response()->json(['message' => 'No autorizado'], 401);
+            return response()->json(['message' => 'No autorizado, debes iniciar sesión'], 401);
         }
 
     }

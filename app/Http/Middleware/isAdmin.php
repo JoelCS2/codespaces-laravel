@@ -18,7 +18,7 @@ class isAdmin
         if (auth('api')->user() && auth('api')->user()->is_admin) {
             return $next($request);
         } else {
-            return response()->json(['message' => 'No autorizado'], 401);
+            return response()->json(['message' => 'No autorizado, no tienes el rol de administrador'], 401);
         }
         return $next($request);
     }
