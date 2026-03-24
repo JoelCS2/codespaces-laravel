@@ -10,18 +10,20 @@ services:
     environment:
         APP_ENV: local
         PHP_EXTENSION_XDEBUG: 1
-        PHP_EXTENSION_PGSQL: 1
-        PHP_EXTENSION_PDO_PGSQL: 1
+        PHP_EXTENSION_MYSQL: 1
+        PHP_EXTENSION_PDO_MYSQL: 1
         APACHE_DOCUMENT_ROOT: /workspace/public
   db:
-    image: postgres:16
+    image: mysql:8
     restart: unless-stopped
     ports:
-        - 5432:5432
+        - 3306:3306
     environment:
-        POSTGRES_DB: laravel
-        POSTGRES_USER: laravel
-        POSTGRES_PASSWORD: laravel
+        MYSQL_DATABASE: joelcano_proyecto_laravel
+        MYSQL_USER: joelcano
+        MYSQL_PASSWORD: 16082006jcs
+        MYSQL_ROOT_PASSWORD: 16082006jcs
+
   redis:
     image: redis:6-alpine
     ports:
