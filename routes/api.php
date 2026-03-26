@@ -9,3 +9,11 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
+
+//Rutas públicas
+Route::get('/products', [ProductsController::class, 'index']);
+Route::get('/categories', [CategoriesController::class, 'index']);
+
+
+
+
