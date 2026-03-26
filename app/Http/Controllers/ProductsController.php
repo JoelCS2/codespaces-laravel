@@ -6,6 +6,7 @@ use App\Models\Products;
 use App\Models\Categories;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 
 class ProductsController extends Controller
 {

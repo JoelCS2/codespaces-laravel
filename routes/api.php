@@ -6,12 +6,6 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CategoriesController;
 
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-
-
 //Rutas públicas
 Route::get('/products', [ProductsController::class, 'index']);
 Route::get('/products/{id}', [ProductsController::class, 'show']);
@@ -23,5 +17,12 @@ Route::get ('/categories/{id}', [CategoriesController::class, 'show']);
 //Rutas protegidas
 Route::post('/products', [ProductsController::class, 'store']);
 Route::post('/categories', [CategoriesController::class, 'store']);
+
+Route::put('/products/{id}', [ProductsController::class, 'update']);
+Route::put('/categories/{id}', [CategoriesController::class, 'update']);
+
+Route::delete('/products/{id}', [ProductsController::class, 'destroy']);
+Route::delete('/categories/{id}', [CategoriesController::class, 'destroy']);
+
 
 

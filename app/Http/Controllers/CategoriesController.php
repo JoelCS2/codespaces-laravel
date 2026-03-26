@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Categories;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 
 class CategoriesController extends Controller
 {
     // GET /categories
-    public function index()
+   public function index()
     {
         $categories = Categories::all();
-        return response()->json($categories, 200);
+        return response()->json(['categories' => $categories], 200); // minúscula
     }
 
     // GET /categories/{id}
