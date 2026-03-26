@@ -4,62 +4,89 @@ namespace App\Http\Controllers;
 
 use App\Models\Users;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $users = Users::all();
+        return response()->json($users, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show($id)
     {
-        //
+        $user = Users::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuari no trobat'], 404);
+        }
+
+        return response()->json($user, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            $validated = $request->validate([
+                'name'     => 'required|string|max:255',
+                'email'    => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8',
+                'role'     => 'required|in:user,admin',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validació',
+                'errors'  => $e->errors(),
+            ], 422);
+        }
+
+        $validated['password'] = Hash::make($validated['password']);
+        $user = Users::create($validated);
+
+        return response()->json($user, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Users $users)
+    public function update(Request $request, $id)
     {
-        //
+        $user = Users::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuari no trobat'], 404);
+        }
+
+        try {
+            $validated = $request->validate([
+                'name'     => 'sometimes|required|string|max:255',
+                'email'    => 'sometimes|required|email|unique:users,email,' . $id,
+                'password' => 'sometimes|required|string|min:8',
+                'role'     => 'sometimes|required|in:user,admin',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validació',
+                'errors'  => $e->errors(),
+            ], 422);
+        }
+
+        if (isset($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($validated);
+        return response()->json($user, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Users $users)
+    public function destroy($id)
     {
-        //
-    }
+        $user = Users::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Users $users)
-    {
-        //
-    }
+        if (!$user) {
+            return response()->json(['message' => 'Usuari no trobat'], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Users $users)
-    {
-        //
+        $user->delete();
+        return response()->json(['message' => 'Usuari eliminat correctament'], 200);
     }
 }

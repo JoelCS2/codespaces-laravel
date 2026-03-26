@@ -3,65 +3,92 @@
 namespace App\Http\Controllers;
 
 use App\Models\Products;
+use App\Models\Categories;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ProductsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Products::all();
-        return response()->json(['products'=> $products], 200);
-        
+        $query = Products::with('category');
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        return response()->json($query->get(), 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show($id)
     {
-        //
+        $product = Products::with('category')->find($id);
+
+        if (!$product) {
+            return response()->json(['message' => 'Producte no trobat'], 404);
+        }
+
+        return response()->json($product, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name'        => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price'       => 'required|numeric|min:0',
+            'stock'       => 'required|integer|min:0',
+            'size'        => 'nullable|string|max:10',
+            'color'       => 'nullable|string|max:50',
+            'category_id' => 'required|integer|exists:categories,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $product = Products::create($request->all());
+        return response()->json(['product' => $product], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Products $products)
+    public function update(Request $request, $id)
     {
-        //
+        $product = Products::find($id);
+
+        if (!$product) {
+            return response()->json(['message' => 'Producte no trobat'], 404);
+        }
+
+        try {
+            $validated = $request->validate([
+                'name'        => 'sometimes|required|string|max:255',
+                'description' => 'nullable|string',
+                'price'       => 'sometimes|required|numeric|min:0',
+                'stock'       => 'sometimes|required|integer|min:0',
+                'size'        => 'nullable|string|max:10',
+                'color'       => 'nullable|string|max:50',
+                'category_id' => 'sometimes|required|integer|exists:categories,id',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validació',
+                'errors'  => $e->errors(),
+            ], 422);
+        }
+
+        $product->update($validated);
+        return response()->json($product->load('categories'), 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Products $products)
+    public function destroy($id)
     {
-        //
-    }
+        $product = Products::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Products $products)
-    {
-        //
-    }
+        if (!$product) {
+            return response()->json(['message' => 'Producte no trobat'], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Products $products)
-    {
-        //
+        $product->delete();
+        return response()->json(['message' => 'Producte eliminat correctament'], 200);
     }
 }
