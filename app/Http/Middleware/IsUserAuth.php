@@ -8,17 +8,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IsUserAuth
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth('api')->user()){
-            return $next($request);
-        }else{
-            return response->json(['message'=> 'No autorizado, no has iniciado sesión.']);
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return response()->json(['message'=> 'No autorizado, no has iniciado sesión.'], 401);
         }
+
+        return $next($request);
     }
 }
