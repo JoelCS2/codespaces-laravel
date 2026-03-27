@@ -20,7 +20,7 @@ class isAdmin
         if($user && $user->role ==='admin'){
             return $next($request);
         }else{
-            return response()->json(['message'=> 'No autorizado, no tienes el rol de administrador.']);
+            return response()->json(['message'=> 'No autorizado, no tienes el rol de administrador.'],  403);
         }
     }
 }

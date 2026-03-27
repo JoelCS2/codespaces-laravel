@@ -78,7 +78,7 @@ class ProductsController extends Controller
         }
 
         $product->update($validated);
-        return response()->json($product->load('categories'), 200);
+        return response()->json($product->load('category'), 200);
     }
 
     public function destroy($id)
